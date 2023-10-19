@@ -2,6 +2,7 @@ const express = require('express')
 const cors = require('cors')
 const mongoose = require('mongoose')
 const routes = require('./routes')
+const socket = require('socket.io')
 
 
 const dotenv = require('dotenv')
@@ -33,6 +34,29 @@ app.get('/', (req, res) => {
 
 app.use('/api', routes)
 
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}` )
 })
+
+const io = socket(server, {
+    cors: {
+        origin: 'https://chat-node-api.onrender.com',
+        credentials: true
+    }
+});
+
+global.onlineUser = new Map();
+
+io.on("connection", (socket) => {
+    global.chatSocket = socket;
+    socket.on("add-user", (userId) => {
+        onlineUsers.set(userId, socket.id);
+    });
+
+    socket.on("send-msg", (data) => {
+        const sendUserSocket = onlineUsers.get(data.to);
+        if (sendUserSocket) {
+            socket.to(sendUserSocket).emit("msg-recieve", data.msg);
+        }
+    });
+});
