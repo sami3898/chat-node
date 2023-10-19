@@ -40,8 +40,8 @@ const server = app.listen(PORT, () => {
 
 const io = socket(server, {
     cors: {
-        // origin: 'https://chat-node-api.onrender.com',
-        origin: 'http://localhost:8000',
+        origin: 'https://chat-node-api.onrender.com',
+        // origin: 'http://localhost:8000',
         credentials: true
     }
 });
