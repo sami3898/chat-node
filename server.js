@@ -40,7 +40,8 @@ const server = app.listen(PORT, () => {
 
 const io = socket(server, {
     cors: {
-        origin: 'https://chat-node-api.onrender.com',
+        // origin: 'https://chat-node-api.onrender.com',
+        origin: 'http://localhost:8000',
         credentials: true
     }
 });
@@ -49,13 +50,17 @@ global.onlineUsers = new Map();
 io.on("connection", (socket) => {
   global.chatSocket = socket;
   socket.on("add-user", (userId) => {
+    console.log("user socket ", userId, socket.id)
     onlineUsers.set(userId, socket.id);
   });
 
   socket.on("send-msg", (data) => {
+    console.log("DATA ", data)
     const sendUserSocket = onlineUsers.get(data.to);
+    console.log("Socket user ", sendUserSocket)
     if (sendUserSocket) {
-      socket.to(sendUserSocket).emit("msg-recieve", data.msg);
+      console.log("in side")
+      socket.to(sendUserSocket.toString()).emit("msg-recieve", data.message);
     }
   });
 });
