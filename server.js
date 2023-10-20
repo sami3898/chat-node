@@ -40,8 +40,8 @@ const server = app.listen(PORT, () => {
 
 const io = socket(server, {
     cors: {
-        origin: 'https://chat-node-api.onrender.com',
-        // origin: 'http://localhost:8000',
+        // origin: 'https://chat-node-api.onrender.com',
+        origin: 'http://localhost:8000',
         credentials: true
     }
 });
@@ -63,4 +63,13 @@ io.on("connection", (socket) => {
       socket.to(sendUserSocket.toString()).emit("msg-recieve", data.message);
     }
   });
+
+  socket.on("user-typing", (data) => {
+    console.log("is user typing")
+    const sendUserSocket = onlineUsers.get(data.to)
+    if (sendUserSocket) {
+      console.log(data)
+      socket.to(sendUserSocket.toString()).emit("isTyping", data.from)
+    }
+  })
 });
