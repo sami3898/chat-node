@@ -69,7 +69,7 @@ io.on("connection", (socket) => {
     const sendUserSocket = onlineUsers.get(data.to)
     if (sendUserSocket) {
       console.log(data)
-      socket.to(sendUserSocket.toString()).emit("isTyping", data.from)
+      socket.to(sendUserSocket.toString()).emit("isTyping", data)
     }
   })
 });
